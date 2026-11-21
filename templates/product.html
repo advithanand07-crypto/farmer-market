@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}{{ p.name }}{% endblock %}
+{% block content %}
+<a href="{{ url_for('index') }}">&larr; All products</a>
+<div class="detail">
+  <div>
+    <span class="chip">{{ p.category }}</span>
+    <h1>{{ p.name }}</h1>
+    <p class="price big">₹{{ '%g'|format(p.price) }}<small> / {{ p.unit }}</small></p>
+    <p>{{ p.quantity }} {{ p.unit }} in stock{{ '' if p.available else ' (currently unavailable)' }}</p>
+    <p>{{ p.description or 'No description added.' }}</p>
+    {% if market_avg %}<p class="note">Local market average: ₹{{ '%.0f'|format(market_avg) }}/kg.
+      <a href="{{ url_for('compare', crop=p.name) }}">Compare farmers</a></p>{% endif %}
+  </div>
+  <div class="panel">
+    <h2>Farmer</h2>
+    <p><b>{{ p.farmer }}</b><br>{{ p.location }}</p>
+    {% if g.user %}
+      <p>Phone: <a href="tel:{{ p.phone }}">{{ p.phone }}</a></p>
+      <a class="btn" href="https://wa.me/91{{ p.phone }}?text={{ ('Hello, I am interested in your ' ~ p.name)|urlencode }}" target="_blank" rel="noopener">Chat on WhatsApp</a>
+      {% if g.user.role == 'customer' %}
+        <form method="post" action="{{ url_for('inquire', pid=p.id) }}">
+          <label>Send a message
+            <textarea name="message" rows="3" required placeholder="Quantity needed, delivery place, date..."></textarea></label>
+          <button class="btn">Send message</button>
+        </form>
+      {% endif %}
+    {% else %}
+      <p><a href="{{ url_for('login', next=request.path) }}">Log in</a> to see the phone number and message this farmer.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

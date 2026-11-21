@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}My dashboard{% endblock %}
+{% block content %}
+<div class="bar"><h1>My products</h1><a class="btn" href="{{ url_for('product_new') }}">List a product</a></div>
+<div class="scroll"><table>
+  <tr><th>Product</th><th>Price</th><th>Stock</th><th>Status</th><th></th></tr>
+  {% for p in products %}
+  <tr><td>{{ p.name }}</td><td>₹{{ '%g'|format(p.price) }} / {{ p.unit }}</td><td>{{ p.quantity }}</td>
+    <td>{{ 'Listed' if p.available and p.quantity > 0 else 'Hidden' }}</td>
+    <td class="acts"><a href="{{ url_for('product_edit', pid=p.id) }}">Edit</a>
+      <form method="post" action="{{ url_for('product_delete', pid=p.id) }}" onsubmit="return confirm('Remove {{ p.name }}?')"><button class="link">Delete</button></form></td></tr>
+  {% else %}<tr><td colspan="5" class="empty">You have not listed anything yet. Add your first product.</td></tr>{% endfor %}
+</table></div>
+
+<h2>Customer messages</h2>
+{% for i in inquiries %}
+<div class="msg">
+  <p><b>{{ i.customer }}</b> ({{ i.phone }}) asked about <b>{{ i.product }}</b></p>
+  <p>{{ i.message }}</p>
+  <form method="post" action="{{ url_for('reply', iid=i.id) }}">
+    <textarea name="reply" rows="2" placeholder="Write your reply">{{ i.reply or '' }}</textarea>
+    <button class="btn small">{{ 'Update reply' if i.reply else 'Send reply' }}</button>
+  </form>
+</div>
+{% else %}<p class="empty">No messages yet.</p>{% endfor %}
+{% endblock %}

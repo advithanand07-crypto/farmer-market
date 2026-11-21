@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Admin{% endblock %}
+{% block content %}
+<h1>Admin panel</h1>
+<div class="stats">
+  {% for k, v in stats.items() %}<div><b>{{ v }}</b>{{ k }}</div>{% endfor %}
+</div>
+
+<h2>Post a market price</h2>
+<form class="filters" method="post" action="{{ url_for('admin_price_add') }}">
+  <input name="crop" placeholder="Crop" required>
+  <input name="market" placeholder="Market name" required>
+  <input name="price_per_kg" type="number" step="0.01" min="0.01" placeholder="₹ per kg" required>
+  <input name="price_date" type="date" value="{{ today }}">
+  <button class="btn">Add rate</button>
+</form>
+<div class="scroll"><table>
+  <tr><th>Date</th><th>Crop</th><th>Market</th><th>₹/kg</th><th></th></tr>
+  {% for r in prices %}
+  <tr><td>{{ r.price_date }}</td><td>{{ r.crop }}</td><td>{{ r.market }}</td><td>{{ '%g'|format(r.price_per_kg) }}</td>
+    <td><form method="post" action="{{ url_for('admin_price_delete', pid=r.id) }}"><button class="link">Delete</button></form></td></tr>
+  {% endfor %}
+</table></div>
+
+<h2>Users</h2>
+<div class="scroll"><table>
+  <tr><th>Name</th><th>Role</th><th>Phone</th><th>Location</th><th>Status</th><th></th></tr>
+  {% for u in users %}
+  <tr><td>{{ u.name }}</td><td>{{ u.role }}</td><td>{{ u.phone }}</td><td>{{ u.location }}</td>
+    <td>{{ 'Active' if u.active else 'Deactivated' }}</td>
+    <td><form method="post" action="{{ url_for('admin_toggle', uid=u.id) }}"><button class="link">{{ 'Deactivate' if u.active else 'Reactivate' }}</button></form></td></tr>
+  {% endfor %}
+</table></div>
+{% endblock %}

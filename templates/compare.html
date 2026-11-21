@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Compare prices{% endblock %}
+{% block content %}
+<h1>Compare prices</h1>
+<p class="lead">Pick a crop to see every farmer selling it, cheapest first.</p>
+<form class="filters" method="get">
+  <select name="crop" aria-label="Crop">
+    <option value="">Choose a crop</option>
+    {% for c in crops %}<option {{ 'selected' if c.name|lower == crop|lower }}>{{ c.name }}</option>{% endfor %}
+  </select>
+  <button class="btn">Compare</button>
+</form>
+{% if crop %}
+  {% if mkt and mkt.avg %}
+    <p class="note">Market rate for {{ crop }}: average ₹{{ '%.0f'|format(mkt.avg) }}/kg
+      (low ₹{{ '%g'|format(mkt.lo) }}, high ₹{{ '%g'|format(mkt.hi) }}).</p>
+  {% endif %}
+  {% if rows %}
+  <div class="scroll"><table>
+    <tr><th>Farmer</th><th>Location</th><th>Price</th><th>Stock</th><th></th></tr>
+    {% for r in rows %}
+    <tr class="{{ 'best' if loop.first }}">
+      <td>{{ r.farmer }}</td><td>{{ r.location }}</td>
+      <td>₹{{ '%g'|format(r.price) }} / {{ r.unit }}{% if loop.first %} <span class="chip">Lowest</span>{% endif %}</td>
+      <td>{{ r.quantity }} {{ r.unit }}</td>
+      <td><a href="{{ url_for('product', pid=r.id) }}">View</a></td>
+    </tr>
+    {% endfor %}
+  </table></div>
+  {% else %}<p class="empty">No farmer is selling {{ crop }} right now.</p>{% endif %}
+{% endif %}
+{% endblock %}

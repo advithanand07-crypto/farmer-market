@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero">
+  <div>
+    <h1>Buy straight from the farm.</h1>
+    <p class="lead">Browse fresh produce listed by farmers near you, compare prices, and talk to them directly.</p>
+    <form class="search" method="get">
+      <input name="q" value="{{ q }}" placeholder="Search tomato, ragi, jasmine..." aria-label="Search products">
+      <button class="btn">Search</button>
+    </form>
+  </div>
+  <aside class="board" aria-label="Today's market rates">
+    <h2>Market board</h2>
+    {% for b in board %}
+      <div class="row"><span>{{ b.crop }}<small>{{ b.market }}</small></span><b>₹{{ '%g'|format(b.price_per_kg) }}/kg</b></div>
+    {% else %}<p>No rates posted yet.</p>{% endfor %}
+    <a href="{{ url_for('prices') }}">See all rates</a>
+  </aside>
+</section>
+
+<form class="filters" method="get">
+  <input type="hidden" name="q" value="{{ q }}">
+  <select name="category" aria-label="Category">
+    <option value="">All categories</option>
+    {% for c in CATEGORIES %}<option {{ 'selected' if c == cat }}>{{ c }}</option>{% endfor %}
+  </select>
+  <input name="location" value="{{ loc }}" placeholder="Farmer's town" aria-label="Location">
+  <select name="sort" aria-label="Sort">
+    <option value="new" {{ 'selected' if sort=='new' }}>Newest</option>
+    <option value="low" {{ 'selected' if sort=='low' }}>Price: low to high</option>
+    <option value="high" {{ 'selected' if sort=='high' }}>Price: high to low</option>
+    <option value="name" {{ 'selected' if sort=='name' }}>Name</option>
+  </select>
+  <button class="btn ghost">Apply</button>
+</form>
+
+<h2>{{ products|length }} product{{ '' if products|length == 1 else 's' }} available</h2>
+<div class="grid">
+{% for p in products %}
+  <a class="card" href="{{ url_for('product', pid=p.id) }}">
+    <span class="chip">{{ p.category }}</span>
+    <h3>{{ p.name }}</h3>
+    <p class="price">₹{{ '%g'|format(p.price) }}<small> / {{ p.unit }}</small></p>
+    <p class="meta">{{ p.quantity }} {{ p.unit }} in stock</p>
+    <p class="meta">{{ p.farmer }}, {{ p.location }}</p>
+  </a>
+{% else %}
+  <p class="empty">Nothing matches. Clear the filters or try another crop name.</p>
+{% endfor %}
+</div>
+{% endblock %}

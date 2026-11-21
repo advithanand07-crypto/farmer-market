@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}My dashboard{% endblock %}
+{% block content %}
+<h1>My messages</h1>
+{% for i in inquiries %}
+<div class="msg">
+  <p>To <b>{{ i.farmer }}</b> about <a href="{{ url_for('product', pid=i.pid) }}">{{ i.product }}</a></p>
+  <p>{{ i.message }}</p>
+  {% if i.reply %}<p class="reply"><b>Reply:</b> {{ i.reply }}</p>{% else %}<p class="meta">Waiting for a reply. You can also call {{ i.phone }}.</p>{% endif %}
+</div>
+{% else %}<p class="empty">You have not messaged any farmer yet. <a href="{{ url_for('index') }}">Browse products</a>.</p>{% endfor %}
+{% endblock %}

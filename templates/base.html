@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}Local Farmer Market{% endblock %}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bitter:wght@500;700&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="{{ url_for('index') }}">Local Farmer Market</a>
+  <nav>
+    <a href="{{ url_for('index') }}">Products</a>
+    <a href="{{ url_for('compare') }}">Compare prices</a>
+    <a href="{{ url_for('prices') }}">Market rates</a>
+    {% if g.user %}
+      <a href="{{ url_for('dashboard') }}">{{ 'Admin' if g.user.role == 'admin' else 'My dashboard' }}</a>
+      <a href="{{ url_for('logout') }}">Log out ({{ g.user.name.split()[0] }})</a>
+    {% else %}
+      <a href="{{ url_for('login') }}">Log in</a>
+      <a class="btn small" href="{{ url_for('register') }}">Join free</a>
+    {% endif %}
+  </nav>
+</header>
+<main>
+  {% with msgs = get_flashed_messages(with_categories=true) %}
+    {% for cat, m in msgs %}<div class="flash {{ cat }}">{{ m }}</div>{% endfor %}
+  {% endwith %}
+  {% block content %}{% endblock %}
+</main>
+<footer>Connecting local farmers directly with customers. No middlemen.</footer>
+</body>
+</html>

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Join{% endblock %}
+{% block content %}
+<form class="auth" method="post">
+  <h1>Create your account</h1>
+  <label>I am a
+    <select name="role" required>
+      <option value="farmer">Farmer (I want to sell)</option>
+      <option value="customer">Customer (I want to buy)</option>
+    </select></label>
+  <label>Full name <input name="name" required></label>
+  <label>Phone (10 digits) <input name="phone" inputmode="numeric" maxlength="10" required></label>
+  <label>Town or village <input name="location" required></label>
+  <label>Password <input type="password" name="password" minlength="6" required></label>
+  <button class="btn">Create account</button>
+  <p>Already registered? <a href="{{ url_for('login') }}">Log in</a></p>
+</form>
+{% endblock %}
